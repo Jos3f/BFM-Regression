@@ -94,6 +94,55 @@ condition_number <- sqrt(max(eval$values) / min(eval$values))
 condition_number # ( see p. 298 Montgomery)
 
 # Variable selection:
+
+
+#Vi vill predikta salary genom att använda hitters
+#Salary = 
+
+predict.regsubsets = function (object ,newdata ,id ,...){
+ form=as.formula(object$call [[2]])
+ mat=model.matrix(form ,newdata )
+ coefi =coef(object ,id=id)
+ xvars =names(coefi )
+ mat[,xvars ]%*% coefi
+ }
+
+
+methods =  list("backward","forward", "seqrep","exhaustive")
+
+for(m in methods){
+
+k=10
+variables = 13
+
+set.seed (1)
+folds=sample (1:k,nrow(data_to_use ),replace =TRUE)
+cv.errors =matrix (NA ,k,variables, dimnames =list(NULL , paste (1:variables) ))
+
+
+ for(j in 1:k){
+   best.fit = regsubsets (density~.,data=data_to_use[folds !=j,],method = m,
+                          nvmax =variables)
+   for(i in 1:variables) {
+     pred=predict (best.fit ,data_to_use[folds ==j,], id=i)
+     cv.errors [j,i]=mean( (data_to_use$density[folds ==j]-pred)^2)
+     }
+   }
+
+mean.cv.errors =apply(cv.errors ,2, mean)
+par(mfrow =c(1,1))
+plot(mean.cv.errors ,type='b', main=m)
+
+reg.best=regsubsets (density~.,data=data_to_use , nvmax =variables, method = m)
+summary(reg.best)
+plot(reg.best)
+coef(reg.best ,8)
+
+}
+
+
+
+
 # Total search for finding best subset:
 regfit.all <- regsubsets(bodyfatmen$density ~ ., data = data_to_use, nvmax=13)
 summary(regfit.all)
@@ -130,11 +179,12 @@ coef(regfit.all, 9) # Adjusted RSq suggests 9 variables
 
 
 # Bootstrapping confidence intervalls:
-lboot <- lm.boot(fit.lm, R = 1000)
-summary(lboot)
-hist(lboot)
+#lboot <- lm.boot(fit.lm, R = 1000)
+#summary(lboot)
+#hist(lboot)
 # Other better method
 fit.lm.boot <- Boot(fit.lm, method="residual", R=1000) # Smaller R gives larger confidence intervalls
 summary(fit.lm.boot)
 confint(fit.lm.boot)
 hist(fit.lm.boot)
+
