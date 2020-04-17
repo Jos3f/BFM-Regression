@@ -41,7 +41,7 @@ for (column_index in colnames(data_to_use)[-1]){
 # Seems like residuals depend on density. The Box - Cox Method might be useful
 
 
-# Stolen from exercise_4_2.R, might be enough for residual testing
+# Same as exercise_4_2.R, might be enough for residual testing
 p <- fit.lm$rank - 1
 n <- nrow(data_to_use)
 leverage.cutoff <- 2*p/n # Montgomery p. 213
