@@ -101,10 +101,6 @@ condition_number_no_sqrt # ( see p. 298 Montgomery)
 
 # Variable selection:
 
-
-#Vi vill predikta salary genom att anv�nda hitters
-#Salary = 
-
 predict.regsubsets = function (object ,newdata ,id ,...){
   form=as.formula(object$call [[2]])
   mat=model.matrix(form ,newdata )
